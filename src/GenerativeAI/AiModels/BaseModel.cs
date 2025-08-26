@@ -3,6 +3,7 @@ using GenerativeAI.Core;
 using GenerativeAI.Exceptions;
 using GenerativeAI.Types;
 using Microsoft.Extensions.Logging;
+using System.Text.Json.Serialization;
 
 namespace GenerativeAI;
 
@@ -42,8 +43,9 @@ public abstract class BaseModel : BaseClient
             var blockErrorMessage = response != null ? ResponseHelper.FormatBlockErrorMessage(response) : "Response was null";
             if (!string.IsNullOrEmpty(blockErrorMessage))
             {
+              var json = System.Text.Json.JsonSerializer.Serialize(response);
                 throw new GenerativeAIException(
-                    $"Error while requesting {url.MaskApiKey()}:\r\n\r\n{blockErrorMessage}",
+                    $"Error while requesting {url.MaskApiKey()}:\r\n\r\n{blockErrorMessage}. json: {json}",
                     blockErrorMessage);
             }
         }
